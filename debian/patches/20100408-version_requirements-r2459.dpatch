@@ -1,0 +1,70 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 20100408-version_requirements-r2459.dpatch by Daigo Moriwaki <daigo@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fixed an undefined method error (version_requirements=), a backport
+## DP: from the upstream r2459.
+
+
+@DPATCH@
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' libgems-ruby~/lib/rubygems/dependency.rb libgems-ruby/lib/rubygems/dependency.rb
+--- libgems-ruby~/lib/rubygems/dependency.rb	2010-02-12 12:13:35.000000000 +0900
++++ libgems-ruby/lib/rubygems/dependency.rb	2010-04-08 21:51:29.000000000 +0900
+@@ -69,9 +69,6 @@
+   end
+ 
+   ##
+-  # What does this dependency require?
+-
+-  ##
+   # A dependency's hash is the XOR of the hashes of +name+, +type+,
+   # and +requirement+.
+ 
+@@ -106,6 +103,9 @@
+     end
+   end
+ 
++  ##
++  # What does this dependency require?
++
+   def requirement
+     return @requirement if defined?(@requirement) and @requirement
+ 
+@@ -160,7 +160,16 @@
+     __requirement
+   end
+ 
+-  alias_method :version_requirement, :version_requirements
++  alias version_requirement version_requirements # :nodoc:
++
++  def version_requirements= requirements # :nodoc:
++    warn "#{Gem.location_of_caller.join ':'}:Warning: " \
++         "Gem::Dependency#version_requirements= is deprecated " \
++         "and will be removed on or after August 2010.  " \
++         "Use Gem::Dependency.new."
++
++    @requirement = Gem::Requirement.create requirements
++  end
+ 
+   def == other # :nodoc:
+     Gem::Dependency === other &&
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' libgems-ruby~/test/test_gem_dependency.rb libgems-ruby/test/test_gem_dependency.rb
+--- libgems-ruby~/test/test_gem_dependency.rb	2010-02-11 04:48:13.000000000 +0900
++++ libgems-ruby/test/test_gem_dependency.rb	2010-04-08 21:51:29.000000000 +0900
+@@ -134,5 +134,16 @@
+     assert d.prerelease?
+   end
+ 
++  def test_version_requirements_equals_deprecated
++    d = dep "pkg", "1.0"
++
++    out, err = capture_io do
++      d.version_requirements = '2.0'
++      assert_equal Gem::Requirement.new(%w[2.0]), d.requirement
++    end
++
++    assert_match %r%deprecated%, err
++  end
++
+ end
+ 

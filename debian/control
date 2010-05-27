@@ -1,0 +1,24 @@
+Source: libgems-rubyee
+Section: ruby
+Priority: optional
+Maintainer: Leonid Borisenko <leo.borisenko@gmail.com>
+Build-Depends: cdbs, dpatch (>= 2.0.10), debhelper (>= 7.0.0), rubyee1.8, ruby-pkg-tools
+Standards-Version: 3.8.4
+Homepage: http://rubygems.org/
+Vcs-Browser: http://github.com/130/libgems-rubyee-debian-package
+Vcs-Git: git://github.com/130/libgems-rubyee-debian-package.git
+
+Package: rubygemsee1.8
+Architecture: all
+Depends: ${misc:Depends}, rubyee1.8
+Suggests: rubyee1.8-dev, build-essential, rubygems-doc
+Description: package management framework for Ruby libraries/applications
+ This is a way to package Ruby libraries/applications for distribution.
+ RubyGems provides the ability to manage concurrent versions of libraries and
+ dependencies between those libraries. Using RubyGems, you can:
+   * download and install Ruby libraries easily
+   * not worry about libraries A and B depending on different versions of
+     library C
+   * easily remove libraries you no longer use
+ .
+ This package provides RubyGems with Ruby Enterprise Edition 1.8.

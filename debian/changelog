@@ -1,0 +1,41 @@
+libgems-rubyee (1.3.6-1) lenny; urgency=low
+
+  * Initial release.
+  * 'debian' diractory was copied from official Debian libgems-ruby (1.3.6-2)
+    package (maintained by Daigo Moriwaki) with following changes:
+      - debian/control
+        * source package name was changed from libgems-ruby to libgems-rubyee
+        * changed Maintainer name
+        * ruby1.8, rdoc1.8, ruby1.9.1, rdoc1.9.1 are all replaced by rubyee1.8 in
+          Build-Depends
+        * changes Vcs-* fields
+        * rubygems1.8 package was renamed to rubygemsee1.8
+        * ruby1.8, rdoc1.8 were replaced by rubyee1.8 in rubygemsee1.8 Depends
+        * ruby1.8-dev were replaced by rubyee1.8-dev in rubygemsee1.8 Suggests
+        * removed Conflicts and Replaces fields in rubygemsee1.8
+        * rubygemsee1.8 Description was changed
+        * rubygems1.9.1, rubygems, rubygems-doc packages were removed
+      - debian/rules
+        * suffix '18' was changed to 'ee18' (or 'EE18')
+        * suffix '1.8' was changed to 'ee1.8'
+        * rules related to packaging rubygems1.9.1 were removed
+        * rules related to packaging rubygems-doc were removed
+      - debian/patches/01_default_gem_path.dpatch
+        * added prefix 'ee' to string 'ConfigMap[:ruby_version]'
+      - debian/rubygems1.8.*
+        * were renamed to rubygemsee1.8.*
+        * string '1.8' in files' content was changed to 'ee1.8'
+      - debian/rubygems1.9.1.*
+        * removed (were used only in packaging rubygems1.9.1)
+      - debian/rubygems-doc.doc-base
+        * removed (was used only in packaging rubygems-doc)
+      - debian/fixshebang.sh
+        * removed (seems like doesn't used at all)
+      - debian/README.Debian
+        * string '{1.8|1.9.1}' was changed to 'ee1.8'
+        * added maintainer name
+      - added maintainer name to following files:
+        * debian/README.source
+        * debian/copyright
+
+ -- Leonid Borisenko <leo.borisenko@gmail.com>  Thu, 27 May 2010 17:19:35 +0300

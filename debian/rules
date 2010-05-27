@@ -1,0 +1,42 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/dpatch.mk
+
+DEB_INSTALL_CHANGELOGS_ALL = ChangeLog debian/README.Debian
+
+RUBYEE18 = /usr/bin/rubyee1.8
+RDOC = /usr/bin/rdocee1.8
+RUBYEE18LIBDIR = $(shell $(RUBYEE18) -rrbconfig -e "puts Config::CONFIG['rubylibdir']")
+
+DEB_INSTALL_DIRS_rubygemsee1.8 += usr/bin/ usr/lib/ruby/ee1.8/  var/lib/gems/ee1.8/
+
+DEB_INSTALL_MANPAGES_rubygemsee1.8 += debian/gemee1.8.1
+
+clean::
+	rm -rf html
+	rm -f debian/gem1.*
+	rm -f debian/etc/bash_completion.d/gem1.*
+
+build/rubygemsee1.8::
+	$(RUBYEE18) setup.rb --no-rdoc --no-ri --prefix=$(CURDIR)/debian/$(cdbs_curpkg)
+
+install/rubygemsee1.8::
+	find $(CURDIR)/debian/ -type f -name "*.in" | \
+	  while read fname; \
+	  do \
+	    sed -e 's/@@VERSION@@/ee1\.8/g' -e 's/@@DOTLESS_VERSION@@/ee18/g' \
+		< $$fname > `expr $$fname : '\(.*\)\.in$$'`ee1.8; \
+	  done; \
+	  : \
+	done
+	mv $(CURDIR)/debian/gemee1.8 $(CURDIR)/debian/gemee1.8.1
+	mkdir -p $(CURDIR)/debian/$(cdbs_curpkg)/$(RUBYEE18LIBDIR)/
+	mkdir -p $(CURDIR)/debian/$(cdbs_curpkg)/usr/bin/
+	mv $(CURDIR)/debian/$(cdbs_curpkg)/lib/* $(CURDIR)/debian/$(cdbs_curpkg)/$(RUBYEE18LIBDIR)/
+	rm -rf $(CURDIR)/debian/$(cdbs_curpkg)/lib
+	mv $(CURDIR)/debian/$(cdbs_curpkg)/bin/gemee1.8 $(CURDIR)/debian/$(cdbs_curpkg)/usr/bin/
+	rm -rf $(CURDIR)/debian/$(cdbs_curpkg)/bin/
+	dh_install -p$(cdbs_curpkg)\
+	  debian/etc/bash_completion.d/gemee1.8 etc/bash_completion.d/
+
